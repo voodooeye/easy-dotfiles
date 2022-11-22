@@ -18,7 +18,7 @@ remove_project_root() {
 
 show_finished_message() {
   if [[ $1 -eq 0 ]]; then
-    echo -e "\nProject $PRJ_DISPLAY was succesfully removed!" \
+    echo -e "\nProject $PRJ_DISPLAY was succesfully removed!"
   else
     echo -e "\n[ WARN ] Project $PRJ_DISPLAY wasn't removed properly!"
   fi
