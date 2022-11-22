@@ -13,7 +13,7 @@
 while [[ $# -gt 0 ]]; do
   [[ "$1" =~ ^[--] && "${1#--}" ]] || { shift; continue; }
 
-  argument_split=( ${1/=/ } )
+  read -ar argument_split <<< "${1/=/ }"
 
   variable_name="$( echo "${argument_split[0]#--}" | tr '-' '_' )"
   variable_value="${argument_split[1]:-"_"}"

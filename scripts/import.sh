@@ -29,13 +29,13 @@ import_dconfs() {
   local jq_filter="$2"
 
   echo "Importing dconfs from [ $data_folder ]..."
-  cd "$data_folder"
+  cd "$data_folder" || return
 
   while read -r schema_path; read -r file 
   do
     [[ -e "$file" ]] || {  missing_file_message "$file"; continue; }
 
-    cat "$file" | dconf load -f "$schema_path"
+    dconf load -f "$schema_path" < "$file"
 
   done < <(jq -cr "$jq_filter" "$config_json")
 }
@@ -75,7 +75,7 @@ import_files() {
   local jq_filter="$2"
 
   echo "Importing files from [ $data_folder ]..."
-  cd "$data_folder"
+  cd "$data_folder" || return
 
   while read -r include; 
   do

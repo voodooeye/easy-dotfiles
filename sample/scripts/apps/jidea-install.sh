@@ -7,9 +7,9 @@ desktop_file="$HOME/.local/share/applications/intellij-idea.desktop"
 package="ideaIU-2022.2.3.tar.gz"
 
 check_already_installed() {
-  local jidea_folder="$(ls "$JIDEA_HOME" 2>/dev/null | grep idea)"
+  local jidea_folder="$(ls "$JIDEA_HOME"/*idea* 2>/dev/null)"
 
-  if [[ "$jidea_folder" != "" ]]; then
+  if [[ "$jidea_folder" ]]; then
     echo "[ WARN ] IntelliJ IDEA install is skipped since it already exists inside the [ $JIDEA_HOME ] folder!"
     exit 0
   fi
@@ -24,7 +24,7 @@ install_package() {
   echo "Installing package to [ $JIDEA_HOME ]..."
   tar -zxf "$package" && rm "$package"
 
-  local jidea_folder="$(ls | grep idea)"
+  local jidea_folder="$(ls ./*idea*)"
   mkdir -p "$JIDEA_HOME" && mv "$jidea_folder"/ "$JIDEA_HOME"/
 
   create_desktop_file "$jidea_folder"
@@ -43,7 +43,7 @@ create_desktop_file() {
 
   echo "Creating new desktop file [ $desktop_file ]..."
 
-  bash -c "cat > "$desktop_file" << EOF
+  bash -c "cat > $desktop_file << EOF
     [Desktop Entry]
     Type=Application
     Terminal=false

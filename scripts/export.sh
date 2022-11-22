@@ -55,15 +55,15 @@ filter_settings() {
 
     [[ "$line" =~ ^\[.*\]$ ]] && current_sub_path="$line"
 
-    [[ " ${!FILTER_MAP[@]} " =~ " $line " ]] \
+    [[ " ${!FILTER_MAP[*]} " =~ " $line " ]] \
         && echo -e "\n$line" >> "$dump_file" && continue
 
     local filter_keys=( ${FILTER_MAP["$current_sub_path"]} )
 
-    [[ "${#filter_keys[@]}" -gt 0 ]] && grep -q ${filter_keys[@]/#/-e } <<< "$line" \
+    [[ "${#filter_keys[@]}" -gt 0 ]] && grep -q ${filter_keys[*]/#/-e } <<< "$line" \
         && echo "$line" >> "$dump_file" && continue
 
-    [[ "${#filter_keys[@]}" -eq 0 && " ${!FILTER_MAP[@]} " =~ " $current_sub_path " ]] \
+    [[ "${#filter_keys[@]}" -eq 0 && " ${!FILTER_MAP[*]} " =~ " $current_sub_path " ]] \
         && echo "$line" >> "$dump_file" && continue
 
   done <<< "$settings"
@@ -78,7 +78,7 @@ export_dconfs() {
   local jq_filter="$2"
 
   echo "Exporting dconfs to [ $data_folder ]..."
-  cd "$data_folder"
+  cd "$data_folder" || return
 
   while read -r schema_path; read -r file; read -r keys
   do

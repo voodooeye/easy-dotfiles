@@ -15,8 +15,9 @@ check_additional_repo() {
 
   cd "$PROJECT_ROOT" && git pull --quiet
 
-  cd "$PRIVATE_FOLDER"
-  test "$(git rev-parse --show-superproject-working-tree)" || return 1
+  cd "$PRIVATE_FOLDER" && {
+    test "$(git rev-parse --show-superproject-working-tree)" || return 1
+  }
 }
 
 display_new_repo_help() {
@@ -37,7 +38,7 @@ display_new_repo_help() {
 }
 
 configure_additional_repo() {
-  cd "$PROJECT_ROOT"
+  cd "$PROJECT_ROOT" || return
 
   local main_repo_url="$(git ls-remote --get-url)"
   local expected_private_url="${main_repo_url%%/*}/$PROJECT_NAME-private.git"
@@ -48,7 +49,7 @@ configure_additional_repo() {
   echo "$expected_private_url"
   echo
   echo "Enter the URL for the private repo"
-  read -p "[ or press Enter to use '$expected_private_url' ]: " provided_url
+  read -pr "[ or press Enter to use '$expected_private_url' ]: " provided_url
 
   local repo="${provided_url:-$expected_private_url}"
   
@@ -68,7 +69,7 @@ handle_additional_repo_data() {
 }
 
 list_branches() {
-  cd "$PRIVATE_FOLDER"
+  cd "$PRIVATE_FOLDER" || return
 
   git branch -r | awk '{ print $1 }' | sed -e '1d' -e 's/origin\///'
 }
@@ -97,7 +98,9 @@ default_submodule_profile() {
 }
 
 submodule_profile_check() {
-  cd "$PRIVATE_FOLDER"; local profile="$(git branch --show-current)"
+  cd "$PRIVATE_FOLDER" || return
+
+  local profile="$(git branch --show-current)"
 
   [[ "$profile" ]] \
       && echo -e "\nCurrent profile for $PRJ_DISPLAY private data is: [ $profile ]" \
@@ -132,10 +135,13 @@ create_new_profile() {
   echo; confirm_action "$message" || return 1
 
   while [[ ! "$valid_name" ]]; do
-    read -p "Enter the new $PRJ_DISPLAY profile name: " name
+    read -pr "Enter the new $PRJ_DISPLAY profile name: " name
 
-    git check-ref-format --branch "$name" &>/dev/null \
-        && local valid_name="$name" || profile_name_error "$name"
+    if git check-ref-format --branch "$name" &>/dev/null; then
+      local valid_name="$name"
+    else
+      profile_name_error "$name"
+    fi
   done
 
   create_branch "$valid_name"

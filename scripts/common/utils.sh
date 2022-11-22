@@ -3,10 +3,13 @@
 setup_log_file() {
   local name="$1" history_folder="history"
 
-  mkdir -p "$LOGS_DIR/$history_folder" && cd "$LOGS_DIR"
+  mkdir -p "$LOGS_DIR/$history_folder"
+  
+  cd "$LOGS_DIR" && mv "$name"* "$history_folder" 2>/dev/null
 
-  mv "$name"* "$history_folder" 2>/dev/null && cd "$history_folder"
-  ls -tr "$name"* 2>/dev/null | head -n -3 | xargs --no-run-if-empty rm 
+  cd "$history_folder" && {
+    ls -tr "$name"* 2>/dev/null | head -n -3 | xargs --no-run-if-empty rm 
+  }
 
   local new_log_file="$LOGS_DIR"/"$name"_"$(date +'%Y-%m-%d_%H:%M:%S')".log
 
@@ -24,12 +27,12 @@ clean_work_dir() {
 
 create_temp_file() {
   local suffix="$1"
-  create_work_dir && echo "$(mktemp --tmpdir="$WORK_DIR" --suffix="$suffix")"
+  create_work_dir && "$(mktemp --tmpdir="$WORK_DIR" --suffix="$suffix")"
 }
 
 confirm_action() {
   while true; do
-    read -p "$1 [y/n]: " -n 1 answer
+    read -rp "$1 [y/n]: " -n 1 answer
 
     case "$answer" in
       y) echo; return 0;;
@@ -115,13 +118,14 @@ configure_git_props() {
 
   source "$DEFAULTS_SCRIPT"
 
-  read -p "Enter your git name [ default: $DEFAULT_GIT_NAME, press Enter to use default ]: " name
-  read -p "Enter your git email [ default: $DEFAULT_GIT_EMAIL, press Enter to use default ]: " email
+  read -rp "Enter your git name [ default: $DEFAULT_GIT_NAME, press Enter to use default ]: " name
+  read -rp "Enter your git email [ default: $DEFAULT_GIT_EMAIL, press Enter to use default ]: " email
 
   for folder in "$PROJECT_ROOT" "$PRIVATE_FOLDER"; do
-    cd "$folder"
-    git config user.name "${name:-"$DEFAULT_GIT_NAME"}"
-    git config user.email "${email:-"$DEFAULT_GIT_EMAIL"}"
+    cd "$folder" && {
+      git config user.name "${name:-"$DEFAULT_GIT_NAME"}"
+      git config user.email "${email:-"$DEFAULT_GIT_EMAIL"}"
+    }
   done
 }
 
@@ -129,10 +133,10 @@ check_git_props() {
   local missing="false"
 
   for folder in "$PROJECT_ROOT" "$PRIVATE_FOLDER"; do
-    cd "$folder"
-    local name="$(git config user.name)"
-    local email="$(git config user.email)"
-
+    cd "$folder" && {
+      local name="$(git config user.name)"
+      local email="$(git config user.email)"
+    }
     [[ "$name" && "$email" ]] || missing="true"
   done
 
@@ -142,7 +146,7 @@ check_git_props() {
 check_schedule_arg() {
   [[ "$schedule" ]] || return
 
-  [[ " ${SUPPORTED_SCHEDULES[@]} " =~ " $schedule " ]] && return
+  [[ " ${SUPPORTED_SCHEDULES[*]} " =~ " $schedule " ]] && return
 
   echo "[ ERROR ] Script argument '--schedule' has invalid value [ $schedule ]"
   echo "Valid values are:" && printf "%s\n" "${SUPPORTED_SCHEDULES[@]}"
