@@ -27,7 +27,7 @@ clean_work_dir() {
 
 create_temp_file() {
   local suffix="$1"
-  create_work_dir && "$(mktemp --tmpdir="$WORK_DIR" --suffix="$suffix")"
+  create_work_dir && mktemp --tmpdir="$WORK_DIR" --suffix="$suffix"
 }
 
 confirm_action() {

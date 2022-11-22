@@ -119,3 +119,4 @@ import_all_dconfs() {
 
 import_all_files
 import_all_dconfs
+clean_work_dir
