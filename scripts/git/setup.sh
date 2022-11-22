@@ -43,9 +43,7 @@ configure_additional_repo() {
   local main_repo_url="$(git ls-remote --get-url)"
   local expected_private_url="${main_repo_url%%/*}/$PROJECT_NAME-private.git"
 
-  echo "Please provide the repositoy URL for '$PROJECT_NAME-private'..."
-  echo
-  echo "It needs to be already created and the URL should look like: "
+  echo "You should create it now if it doesn't exist and the URL should look like: "
   echo "$expected_private_url"
   echo
   echo "Enter the URL for the private repo"
