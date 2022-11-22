@@ -7,7 +7,7 @@ desktop_file="$HOME/.local/share/applications/intellij-idea.desktop"
 package="ideaIU-2022.2.3.tar.gz"
 
 check_already_installed() {
-  local jidea_folder="$(ls $JIDEA_HOME 2>/dev/null | grep idea)"
+  local jidea_folder="$(ls "$JIDEA_HOME" 2>/dev/null | grep idea)"
 
   if [[ "$jidea_folder" != "" ]]; then
     echo "[ WARN ] IntelliJ IDEA install is skipped since it already exists inside the [ $JIDEA_HOME ] folder!"

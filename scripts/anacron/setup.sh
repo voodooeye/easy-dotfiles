@@ -52,7 +52,7 @@ create_script() {
 
 handle_existing_schedule() {
   local script="$1"
-  local schedule="$(sed -e 's|.*\.||' -e 's|/.*||' <<< $script)"
+  local schedule="$(sed -e 's|.*\.||' -e 's|/.*||' <<< "$script")"
   local action="${script##*-}"
 
   echo "Automatic $PRJ_DISPLAY [ $action"s" ] are configured with [ $schedule ] frequency."

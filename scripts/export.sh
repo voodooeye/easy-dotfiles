@@ -37,7 +37,7 @@ create_filter_map() {
     local sub_path="$(grep -o '/.*/' <<< "$key" | sed -e 's|[ \t]*||g' -e 's|^/|[|' -e 's|/$|]|')"
     
     [[ "$sub_path" ]] \
-        && FILTER_MAP["$sub_path"]="$(sed 's|/.*/||' <<< $key)" \
+        && FILTER_MAP["$sub_path"]="$(sed 's|/.*/||' <<< "$key")" \
         || FILTER_MAP["$root_path"]+=" ""$key"
   done
 }
@@ -82,7 +82,7 @@ export_dconfs() {
 
   while read -r schema_path; read -r file; read -r keys
   do
-    local full_dump="$(dconf dump $schema_path)"
+    local full_dump="$(dconf dump "$schema_path")"
     
     [[ "$keys" == "null" ]] && echo "$full_dump" > "$file" \
         || filter_settings "$keys" "$full_dump" "$file"

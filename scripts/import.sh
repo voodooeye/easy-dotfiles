@@ -18,7 +18,7 @@ setup_log_file "${schedule:-"manual"}-import""${only_files+"-files"}${only_dconf
 
 missing_file_message() {
   local path="$1"
-  local relative_path="$(sed -e 's|^/||' -e 's|^|./|' <<< $path)"
+  local relative_path="$(sed -e 's|^/||' -e 's|^|./|' <<< "$path")"
 
   echo "[ WARN ] Missing file to import [ $relative_path ]" 
 }
