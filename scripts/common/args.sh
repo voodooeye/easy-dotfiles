@@ -7,13 +7,14 @@
 #
 # We set an underscore _ char as value to the $no_value_arg in order 
 # to make conditional checks easier:
-# [[ "$no_value_arg" ]] && echo "arg present" || echo "arg missing"
+# [[ "$no_value_arg" ]] && echo "arg present"
+# [[ "$no_value_arg" ]] || echo "arg missing"
 #
 
 while [[ $# -gt 0 ]]; do
   [[ "$1" =~ ^[--] && "${1#--}" ]] || { shift; continue; }
 
-  read -ar argument_split <<< "${1/=/ }"
+  argument_split=( ${1/=/ } )
 
   variable_name="$( echo "${argument_split[0]#--}" | tr '-' '_' )"
   variable_value="${argument_split[1]:-"_"}"
