@@ -43,9 +43,7 @@ configure_additional_repo() {
   local main_repo_url="$(git ls-remote --get-url)"
   local expected_private_url="${main_repo_url%%/*}/$PROJECT_NAME-private.git"
 
-  echo "Please provide the repositoy URL for '$PROJECT_NAME-private'..."
-  echo
-  echo "It needs to be already created and the URL should look like: "
+  echo "You should create it now if it doesn't exist and the URL should look like: "
   echo "$expected_private_url"
   echo
   echo "Enter the URL for the private repo"
@@ -120,14 +118,16 @@ display_profiles() {
   submodule_profile_check
 }
 
+existing_profile_error() {
+  local name="$1"
+  echo -e "\n[ ERROR ] A profile with name [ $name ] already exists!\n"
+}
+
 profile_name_error() {
   local name="$1"
-  echo
-  echo "[ ERROR ] The provided name [ $name ] is invalid!"
-  echo
-  echo "Please see the official git docs on how to name references (branches):"
-  echo "https://git-scm.com/docs/git-check-ref-format"
-  echo
+  echo -e "\n[ ERROR ] The provided name [ $name ] is invalid!"
+  echo -e "\nPlease see the official git docs on how to name references (branches):"
+  echo -e "https://git-scm.com/docs/git-check-ref-format\n"
 }
 
 create_new_profile() {
@@ -137,11 +137,13 @@ create_new_profile() {
   while [[ ! "$valid_name" ]]; do
     read -rp "Enter the new $PRJ_DISPLAY profile name: " name
 
-    if git check-ref-format --branch "$name" &>/dev/null; then
-      local valid_name="$name"
-    else
-      profile_name_error "$name"
-    fi
+    [[ " ${PROFILES_ARRAY[*]} " =~ " $name " ]] \
+        && { existing_profile_error "$name"; continue; }
+
+    git check-ref-format --branch "$name" &>/dev/null \
+        || { profile_name_error "$name"; continue; }
+
+    local valid_name="$name"
   done
 
   create_branch "$valid_name"
