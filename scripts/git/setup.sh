@@ -50,7 +50,7 @@ configure_additional_repo() {
   echo "Enter the URL for the private repo"
   read -p "[ or press Enter to use '$expected_private_url' ]: " provided_url
 
-  local repo="${provided_url:-"$expected_private_url"}"
+  local repo="${provided_url:-$expected_private_url}"
   
   rm -rf private && git submodule add --force "$repo" private
 }

@@ -1,8 +1,7 @@
 #!/bin/bash
 
 setup_log_file() {
-  local name="$1"
-  local history_folder="history"
+  local name="$1" history_folder="history"
 
   mkdir -p "$LOGS_DIR/$history_folder" && cd "$LOGS_DIR"
 
@@ -10,6 +9,8 @@ setup_log_file() {
   ls -tr "$name"* 2>/dev/null | head -n -3 | xargs --no-run-if-empty rm 
 
   local new_log_file="$LOGS_DIR"/"$name"_"$(date +'%Y-%m-%d_%H:%M:%S')".log
+
+  echo -e "*** Script output is saved to: [ $new_log_file ] ***\n"
   exec > >( tee "$new_log_file" ) 2>&1
 }
 
@@ -58,24 +59,24 @@ write_permission_check() {
 }
 
 replace_template_var() {
-  local var_name="$1"; local var_value="$2" local file="$3"
+  local var_name="$1" var_value="$2" file="$3"
   local var_suffix="_@REPLACE"
 
   write_permission_check "$file" || local cmd_prefix="sudo"
 
-  $cmd_prefix sed -i "s|"$var_name$var_suffix"|"$var_value"|g" "$file"
+  $cmd_prefix sed -i "s|$var_name$var_suffix|$var_value|g" "$file"
 }
 
 replace_line_in_file() {
-  local file="$1"; local line_prefix="$2"; local replacement_line="$3"
+  local file="$1" line_prefix="$2" replacement_line="$3"
 
   sed -i "s/^$line_prefix.*$/$replacement_line/g" "$file"
 }
 
 replace_config_property() {
-  local config_file=$1; local property_name=$2; local property_value=$3
+  local config_file=$1 property_name=$2 property_value=$3
 
-  local value_separator="="; local comment_prefix="#"
+  local value_separator="=" comment_prefix="#"
 
   local section_prefix="$comment_prefix""$comment_prefix""$comment_prefix"
 
@@ -161,7 +162,7 @@ remove_anacron_script() {
       local file="$folder/$ANACRON_SCRIPT_PREFFIX""$action"
       [[ -e "$file" ]] || continue
 
-      echo "Removing $PRJ_DISPLAY anacron script [ "$file" ]..."
+      echo "Removing $PRJ_DISPLAY anacron script [ $file ]..."
       sudo rm "$file"
     done
   done

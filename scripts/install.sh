@@ -86,7 +86,7 @@ install_extensions() {
     local ext_uuid="$(echo "$ext_info" | jq -r '.uuid')"
     local ext_download_url="$(echo "$ext_info" | jq -r '.download_url')"
     
-    local ego_download_url="https://extensions.gnome.org$ext_download_url"
+    local ego_download_url="https://extensions.gnome.org""$ext_download_url"
     local package="$ext_uuid".zip
 
     wget -nv -t 5 "$ego_download_url" -O "$package"

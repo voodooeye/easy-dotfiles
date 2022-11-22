@@ -15,7 +15,7 @@ while [[ $# -gt 0 ]]; do
 
   argument_split=( ${1/=/ } )
 
-  variable_name="$( echo "${argument_split[0]#--}" | tr '-' '_' )"
+  variable_name="$( echo ${argument_split[0]#--} | tr '-' '_' )"
   variable_value="${argument_split[1]:-"_"}"
 
   # Safe eval => http://mywiki.wooledge.org/BashFAQ/006#eval

@@ -18,9 +18,9 @@ setup_log_file "${schedule:-"manual"}-import""${only_files+"-files"}${only_dconf
 
 missing_file_message() {
   local path="$1"
-  local relative_path="$(sed -e 's|^/||' -e 's|^|./|' <<< "$path")"
+  local relative_path="$(sed -e 's|^/||' -e 's|^|./|' <<< $path)"
 
-  echo "[ WARN ] Missing file to import [ "$relative_path" ]" 
+  echo "[ WARN ] Missing file to import [ $relative_path ]" 
 }
 
 import_dconfs() {
@@ -41,14 +41,14 @@ import_dconfs() {
 }
 
 restore_permissions() {
-  local source="$1"; local target="$2"
+  local source="$1" target="$2"
   local file="$source/$PERMISSIONS_FILE"
 
   sudo bash -c "cd \"$target\" && setfacl --restore=\"$file\"" 
 }
 
 import_file_path() {
-  local path="$1"; local data_folder="$2"; local cmd_prefix="$3"
+  local path="$1" data_folder="$2" cmd_prefix="$3"
 
   local folder="$(dirname "$path")"
   local search="$(basename "$path")"

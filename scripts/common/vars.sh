@@ -22,7 +22,7 @@ check_working_dir() {
 
 # BE CAREFUL if changing this since it's used in a lot of places [ file names, sed patterns, etc. ]
 PROJECT_NAME="easy-dotfiles" 
-PRJ_DISPLAY="<"$PROJECT_NAME">"
+PRJ_DISPLAY="<$PROJECT_NAME>"
 
 PROJECT_ROOT="$(get_project_root)" && check_working_dir
 
