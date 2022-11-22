@@ -92,7 +92,7 @@ export_dconfs() {
 
 create_permissions_file() {
   local source="$1" target="$2"
-  local all_permissions="$(sudo bash -c "cd \"$source\" && getfacl -R . ")\n"
+  local all_permissions="$(sudo bash -c "cd \"$source\" && getfacl -R . ")"
 
   cd "$target" && rm -f "$PERMISSIONS_FILE"
 
@@ -100,7 +100,7 @@ create_permissions_file() {
 
   while read -r file; do
     local section_start="^# file: ${file/#.\//}$"
-    printf "%s" "$all_permissions" | grep "$section_start" --after-context=6 >> "$PERMISSIONS_FILE"
+    printf "%s\n" "$all_permissions" | grep "$section_start" --after-context=6 >> "$PERMISSIONS_FILE"
 
   done <<< "$exported_files"
 }
