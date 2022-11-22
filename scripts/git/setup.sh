@@ -49,7 +49,7 @@ configure_additional_repo() {
   echo "$expected_private_url"
   echo
   echo "Enter the URL for the private repo"
-  read -pr "[ or press Enter to use '$expected_private_url' ]: " provided_url
+  read -rp "[ or press Enter to use '$expected_private_url' ]: " provided_url
 
   local repo="${provided_url:-$expected_private_url}"
   
@@ -135,7 +135,7 @@ create_new_profile() {
   echo; confirm_action "$message" || return 1
 
   while [[ ! "$valid_name" ]]; do
-    read -pr "Enter the new $PRJ_DISPLAY profile name: " name
+    read -rp "Enter the new $PRJ_DISPLAY profile name: " name
 
     if git check-ref-format --branch "$name" &>/dev/null; then
       local valid_name="$name"
